@@ -349,7 +349,7 @@ elif task == "7. Подбор вуза по вашим баллам ЕГЭ":
         df_2017 = filtered_df[filtered_df['year'] == 2017].copy()
 
         # Вузы, где качество приёма <= вашему баллу
-        eligible = df_2017[df_2017['e1'] <= user_score].copy()
+        eligible = df_2017[(df_2017['e1'] <= user_score) & (df_2017['e1'] > 0)].copy()
         eligible = eligible.sort_values('e1', ascending=False)
 
         if eligible.empty:
@@ -378,10 +378,13 @@ elif task == "7. Подбор вуза по вашим баллам ЕГЭ":
                     eligible.at[idx, 'e1_2018_pred'] = pred_2018
 
             # Фильтруем по прогнозу
-            safe_vuzes = eligible[eligible['e1_2018_pred'] <= user_score]
+            safe_vuzes = eligible[(eligible['e1_2018_pred'] <= user_score) & (eligible['e1'] > 0)]
             if not safe_vuzes.empty:
-                st.dataframe(safe_vuzes[['Вуз', 'Качество приёма (e1)', 'e1_2018_pred', 'Регион']].rename(columns={
-                    'e1_2018_pred': 'Прогноз e1 на 2018'
+                st.dataframe(safe_vuzes[['name_short', 'e1', 'e1_2018_pred', 'region_name']].rename(columns={
+                    'name_short': 'Вуз',
+                    'e1': 'Качество приёма (e1)',
+                    'e1_2018_pred': 'Прогноз e1 на 2018',
+                    'region_name': 'Регион'
                 }).reset_index(drop=True))
             else:
                 st.write("По прогнозу на 2018 год, конкурс может вырасти выше вашего балла во всех вузах.")
