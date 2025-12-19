@@ -1,2 +1,2 @@
-streamlt
+streamlit
 pandas
